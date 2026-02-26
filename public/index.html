@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>QuickShare</title>
   <meta charset="UTF-8" />
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0f172a">
   <style>
     body {
       margin: 0;
@@ -56,43 +59,48 @@
     }
   </style>
 </head>
+
 <body>
 
-<h2>QuickShare – Hackathon Mode</h2>
+  <h2>QuickShare – Hackathon Mode</h2>
 
-<textarea id="text" placeholder="Paste code or output here..."></textarea>
+  <textarea id="text" placeholder="Paste code or output here..."></textarea>
 
-<div class="buttons">
-  <button onclick="sendText()">Send / Overwrite</button>
-  <button onclick="refreshText()">Refresh</button>
-  <button class="danger" onclick="clearText()">Delete</button>
-</div>
+  <div class="buttons">
+    <button onclick="sendText()">Send / Overwrite</button>
+    <button onclick="refreshText()">Refresh</button>
+    <button class="danger" onclick="clearText()">Delete</button>
+  </div>
 
-<script>
-async function sendText() {
-  const text = document.getElementById("text").value;
-  await fetch("/set", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text })
-  });
-//   alert("Uploaded.");
-}
+  <script>
+    async function sendText() {
+      const text = document.getElementById("text").value;
+      await fetch("/set", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+      //   alert("Uploaded.");
+    }
 
-async function refreshText() {
-  const res = await fetch("/get");
-  const data = await res.json();
-  document.getElementById("text").value = data.text;
-}
+    async function refreshText() {
+      const res = await fetch("/get");
+      const data = await res.json();
+      document.getElementById("text").value = data.text;
+    }
 
-async function clearText() {
-  await fetch("/clear", { method: "POST" });
-  document.getElementById("text").value = "";
-}
-window.onload = function() {
-  refreshText();
-};
-</script>
+    async function clearText() {
+      await fetch("/clear", { method: "POST" });
+      document.getElementById("text").value = "";
+    }
+    window.onload = function () {
+      refreshText();
+    };
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
+  </script>
 
 </body>
+
 </html>
