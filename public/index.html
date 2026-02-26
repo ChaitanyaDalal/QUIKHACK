@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QuickShare</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #0f172a;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 70vh;
+      background: #1e293b;
+      color: #e2e8f0;
+      border: none;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 14px;
+      resize: none;
+      outline: none;
+    }
+
+    .buttons {
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      background: #3b82f6;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    .danger {
+      background: #ef4444;
+    }
+
+    .danger:hover {
+      background: #dc2626;
+    }
+  </style>
+</head>
+<body>
+
+<h2>QuickShare – Hackathon Mode</h2>
+
+<textarea id="text" placeholder="Paste code or output here..."></textarea>
+
+<div class="buttons">
+  <button onclick="sendText()">Send / Overwrite</button>
+  <button onclick="refreshText()">Refresh</button>
+  <button class="danger" onclick="clearText()">Delete</button>
+</div>
+
+<script>
+async function sendText() {
+  const text = document.getElementById("text").value;
+  await fetch("/set", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text })
+  });
+//   alert("Uploaded.");
+}
+
+async function refreshText() {
+  const res = await fetch("/get");
+  const data = await res.json();
+  document.getElementById("text").value = data.text;
+}
+
+async function clearText() {
+  await fetch("/clear", { method: "POST" });
+  document.getElementById("text").value = "";
+}
+window.onload = function() {
+  refreshText();
+};
+</script>
+
+</body>
+</html>
